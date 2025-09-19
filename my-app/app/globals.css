@@ -1,5 +1,6 @@
 @import 'antd/dist/reset.css';
-a{
+
+a {
     text-decoration: none !important;
     color: inherit;
 }
