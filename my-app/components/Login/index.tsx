@@ -4,7 +4,8 @@ import type { NextPage } from 'next';
 import { Modal, Form, Input, Button, Space, Typography, message } from 'antd';
 import { MobileOutlined, SafetyOutlined, GithubOutlined } from '@ant-design/icons';
 import { useState } from 'react';
-
+import request from '@/Service/fetch';
+import { SendCodeResponse, LoginResponse } from '@/types/api';
 const { Text, Link } = Typography;
 
 interface LoginProps {
@@ -34,6 +35,18 @@ const Login: NextPage<LoginProps> = ({ isShow, onClose }) => {
             }
             setCodeLoading(true);
             setIsShowVerifyCode(true);
+            request.post<SendCodeResponse>('/api/user/sendcode', { 
+                to: phone,
+                templateId: 1
+            }).then((res) => {
+                if (res?.code === 0) {
+                    message.success('验证码已发送');
+                    setIsShowVerifyCode(true);
+                } else {
+                    message.error(res?.message || '发送验证码失败');
+                }
+                console.log(res);
+            });
             // 这里添加获取验证码的逻辑
             console.log('获取验证码:', phone);
             message.success('验证码已发送');
@@ -47,12 +60,32 @@ const Login: NextPage<LoginProps> = ({ isShow, onClose }) => {
     const handleLogin = async (values: FormValues) => {
         try {
             setLoading(true);
-            // 这里添加登录逻辑
-            console.log('登录:', values);
-            message.success('登录成功');
-            onClose();
-        } catch {
-            message.error('登录失败');
+            
+            const response = await request.post<LoginResponse>('/api/user/login', {
+                phone: values.phone,
+                code: values.verifyCode
+            });
+            
+            if (response?.code === 0) {
+                message.success('登录成功');
+                
+                // 保存token到localStorage（可选，因为已经存储在Cookie中）
+                if (response.data?.token) {
+                    localStorage.setItem('auth_token', response.data.token);
+                    localStorage.setItem('user_info', JSON.stringify(response.data.user));
+                }
+                
+                console.log('登录成功:', response.data);
+                onClose();
+                
+                // 可以触发页面刷新或状态更新
+                // window.location.reload();
+            } else {
+                message.error(response?.message || '登录失败');
+            }
+        } catch (error) {
+            console.error('登录失败:', error);
+            message.error('登录失败，请重试');
         } finally {
             setLoading(false);
         }

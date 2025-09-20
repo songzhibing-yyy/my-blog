@@ -9,12 +9,24 @@
     "lint": "eslint"
   },
   "dependencies": {
+    "@types/redis": "^4.0.11",
+    "@types/uuid": "^11.0.0",
     "antd": "^5.27.4",
+    "axios": "^1.12.2",
+    "js-base64": "^3.7.8",
+    "jsbase64": "^1.1.0",
+    "md5": "^2.3.0",
     "mockjs": "^1.1.0",
+    "mysql": "^2.18.1",
+    "mysql2": "^3.15.0",
     "next": "^14.2.32",
     "react": "^18.3.1",
     "react-dom": "^18.3.1",
-    "sass": "^1.92.1"
+    "redis": "^5.8.2",
+    "reflect-metadata": "^0.2.2",
+    "sass": "^1.92.1",
+    "typeorm": "^0.3.27",
+    "uuid": "^13.0.0"
   },
   "devDependencies": {
     "@eslint/eslintrc": "^3",
